@@ -2,7 +2,6 @@ require('dotenv').config()
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const mongoose = require('mongoose')
 const Person = require('./models/person')
 
 morgan.token('content', (req, res) => {
@@ -14,7 +13,7 @@ const app = express()
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'))
 app.use(cors())
-app.use(express.static('dist_static'))
+app.use(express.static('dist'))
 
 let data = []
 
@@ -60,18 +59,13 @@ app.post('/api/persons', (request, response) => {
       error: 'name or number missing'
     })
   }
-  if (data.map(person => person.name).includes(body.name)) {
-    return response.status(400).json({
-      error: 'name must be unique'
-    })
-  }
-  const person = {
-    id: generateId(),
+  const person = new Person({
     name: body.name,
     number: body.number
-  }
-  data = data.concat(person)
-  response.json(person)
+  })
+  person.save().then(savedPerson=> {
+    response.json(savedPerson)
+  })
 })
 
 const PORT = process.env.PORT
