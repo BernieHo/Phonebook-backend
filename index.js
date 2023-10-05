@@ -17,10 +17,6 @@ app.use(express.static('dist'))
 
 let data = []
 
-const generateId = () => {
-  return Math.floor(Math.random() * 1e6)
-}
-
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
     response.json(persons)
@@ -43,13 +39,9 @@ app.get('/api/persons/:id', (request, response) => {
 })
 
 app.delete('/api/persons/:id', (request, response) => {
-  const id = Number(request.params.id)
-  if (data.map(person => person.id).includes(id)) {
-    data = data.filter(person => person.id !== id)
+  Person.findByIdAndDelete(request.params.id).then(person =>{
     response.status(204).end()
-  } else {
-    response.status(404).end()
-  }
+  })
 })
 
 app.post('/api/persons', (request, response) => {
