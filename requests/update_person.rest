@@ -1,0 +1,8 @@
+PUT http://localhost:3001/api/persons/651da18f8c7fb9b9a1ffba85
+Content-Type: application/json
+
+{
+  "name": "Bernie Ho",
+  "number": "12-78787878",
+  "id": "651da18f8c7fb9b9a1ffba85"
+}
