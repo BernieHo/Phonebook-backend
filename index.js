@@ -25,11 +25,8 @@ const unknownEndpoint = (request, response) => {
 
 app.use(cors())
 app.use(express.json())
-app.use(morgan(
-  ':method :url :status :res[content-length] - :response-time ms :content'))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :content'))
 app.use(express.static('dist'))
-
-let data = []
 
 app.get('/api/persons', (request, response) => {
   Person.find({}).then(persons => {
@@ -45,8 +42,7 @@ app.post('/api/persons', (request, response) => {
     })
   }
   const person = new Person({
-    name: body.name,
-    number: body.number
+    name: body.name, number: body.number
   })
   person.save().then(savedPerson => {
     response.json(savedPerson)
@@ -54,9 +50,10 @@ app.post('/api/persons', (request, response) => {
 })
 
 app.get('/info', (request, response) => {
-  const now = new Date().toString()
-  response.send(
-    `<p>Phonebook has info for ${data.length} people</p><p>${now}</p>`)
+  Person.count({}).then(personCount => {
+    const now = new Date().toString()
+    response.send(`<p>Phonebook has info for ${personCount} people</p><p>${now}</p>`)
+  })
 })
 
 app.get('/api/persons/:id', (request, response, next) => {
@@ -86,8 +83,8 @@ app.delete('/api/persons/:id', (request, response, next) => {
 app.put('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndUpdate(request.params.id, { number: request.body.number }, { new: true })
     .then(updatedPerson => {
-    response.json(updatedPerson)
-  })
+      response.json(updatedPerson)
+    })
     .catch((error => next(error)))
 })
 
