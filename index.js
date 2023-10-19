@@ -6,7 +6,7 @@ const morgan = require('morgan')
 
 const Person = require('./models/person')
 
-morgan.token('content', (req, res) => {
+morgan.token('content', (req) => {
   if (req.method === 'POST') {
     return JSON.stringify(req.body)
   }
@@ -84,7 +84,7 @@ app.delete('/api/persons/:id', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const {name, number } = request.body
+  const { name, number } = request.body
   Person.findByIdAndUpdate(request.params.id, { name, number },
     { new: true, runValidators: true, context: 'query' })
     .then(updatedPerson => {
